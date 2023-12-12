@@ -1,19 +1,29 @@
-import { Null, Opt, Record, nat64, text } from "azle";
+import { Record, text, nat64, Vec } from "azle";
 
-export const SaveAssistantPayload = Record({
-    id: text,
-    name: text,
-    description: Null || Opt(text),
-    model: text,
-    instructions: text,
+// Define the ConversationEntryType
+export type ConversationEntryType = {
+    userInput: string;
+    aiResponse: string;
+};
+
+// Define the Record for ConversationEntry
+export const ConversationEntry = Record({
+    userInput: text,
+    aiResponse: text
 });
 
+// Define the ThreadType
+export type ThreadType = {
+    id: string;
+    object: string;
+    created_at: bigint;
+    conversation: ConversationEntryType[];
+};
+
+// Define the Record for Thread
 export const Thread = Record({
     id: text,
     object: text,
     created_at: nat64,
-});
-
-export const CreateThread = Record({
-    thread: Thread,
+    conversation: Vec(ConversationEntry)
 });

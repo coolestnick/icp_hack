@@ -1,8 +1,10 @@
 import { update, text, Ok, Err, Result, StableBTreeMap, query, bool } from "azle";
 import { ErrorResponse } from "./models/error";
-import { Thread } from "./models/assistant";
+import { ThreadType,Thread, ConversationEntryType } from "./models/assistant";
 
-// Assuming Thread model includes user input and AI response
+// Use 'typeof' to refer to the types of the imported values
+
+
 const threadStorage = StableBTreeMap(text, Thread, 4);
 
 class Assistant {
@@ -21,22 +23,31 @@ class Assistant {
             async (userIdentity, userInput) => {
                 if (!userIdentity || !userInput) {
                     return Err({
-                        error: { message: "userIdentity and userInput can not be empty" },
+                        error: { message: "userIdentity and userInput cannot be empty" },
                     });
                 }
 
                 // Placeholder for AI response - to be integrated
                 let aiResponse = `AI Response for: ${userInput}`;
 
-                let thread: Thread = {
-                    userIdentity,
-                    conversation: [{ userInput, aiResponse }]
+                // Create a new conversation entry
+                let newEntry: ConversationEntryType = {
+                    userInput,
+                    aiResponse
                 };
 
-                // Update the thread if it exists
-                const existingThread = threadStorage.get(userIdentity);
-                if (!("None" in existingThread)) {
-                    thread.conversation = [...existingThread.Some.conversation, { userInput, aiResponse }];
+                let existingThread = threadStorage.get(userIdentity);
+                let thread:  ThreadType;
+                if ("None" in existingThread) {
+                    thread = {
+                        id: userIdentity,  // Assuming the thread ID is the userIdentity
+                        object: "Chat Thread",
+                        created_at: BigInt(Date.now()),
+                        conversation: [newEntry]
+                    };
+                } else {
+                    thread = existingThread.Some;
+                    thread.conversation.push(newEntry);
                 }
 
                 threadStorage.insert(userIdentity, thread);
@@ -52,7 +63,7 @@ class Assistant {
             Result(Thread, ErrorResponse),
             async (userIdentity) => {
                 if (!userIdentity) {
-                    return Err({ error: { message: "userIdentity can not be empty" } });
+                    return Err({ error: { message: "userIdentity cannot be empty" } });
                 }
 
                 const thread = threadStorage.get(userIdentity);
@@ -72,7 +83,7 @@ class Assistant {
         return update([text], Result(text, ErrorResponse), async (userIdentity) => {
             if (!userIdentity) {
                 return Err({
-                    error: { message: "userIdentity can not be empty" },
+                    error: { message: "userIdentity cannot be empty" },
                 });
             }
 

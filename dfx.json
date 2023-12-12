@@ -1,42 +1,13 @@
 {
     "canisters": {
-        "internet_identity": {
-            "type": "custom",
-            "shrink": false,
-            "candid": "https://github.com/dfinity/internet-identity/releases/download/release-2023-09-08/internet_identity.did",
-            "wasm": "https://github.com/dfinity/internet-identity/releases/download/release-2023-09-08/internet_identity_dev.wasm.gz"
-        },
         "health_powered_AI_platform": {
             "type": "custom",
             "main": "src/index.ts",
             "candid": "src/index.did",
             "build": "npx azle health_powered_AI_platform",
             "wasm": ".azle/health_powered_AI_platform/health_powered_AI_platform.wasm",
-            "gzip": true,
-            "env":["OPEN_AI_API_KEY"]
-        },
-        "health_ai_frontend":{
-            "dependencies":["health_ai_frontend"],
-            "frontend":{
-                "entrypoint":"src/health_ai_frontend/public/index.html"
-            },
-            "source":[
-                "src/health_ai_frontend/src/assets",
-                "dist/health_ai_frontend/"
-            ],
-            "type":"assets",
-            "gzip":true
+            "gzip": true
         }
-
-        
-    },
-    "defaults": {
-        "build": {
-          "args": "",
-          "packtool": ""
-        }
-    },
-    "output_env_file": ".env",
-    "version": 1
+    }
 }
 
