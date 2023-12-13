@@ -17,9 +17,9 @@
         "health_ai_backend": {
             "type": "custom",
             "main": "src/health_ai_backend/index.ts",
-            "candid": "src/health_ai_backend/src/index.did",
+            "candid": "src/index.did",
             "build": "npx azle health_ai_backend",
-            "wasm": ".azle/health_ai_backend/dfinity_js_backend.wasm",
+            "wasm": ".azle/health_ai_backend/health_ai_backend.wasm",
             "gzip": true,
             "env": ["OPEN_AI_API_KEY"]
         },

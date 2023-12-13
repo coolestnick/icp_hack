@@ -1,13 +1,21 @@
 {
+  "name": "dfinity_js_frontend",
+  "version": "0.2.0",
+  "description": "Internet Computer starter application",
+  "keywords": [
+    "Internet Computer",
+    "Motoko",
+    "JavaScript",
+    "Canister"
+  ],
   "scripts": {
-    "dfx_install": "DFX_VERSION=0.15.1 sh -ci \"$(curl -fsSL https://sdk.dfinity.org/install.sh)\"",
-    "replica_start": "dfx start --background",
-    "replica_stop": "dfx stop",
-    "canister_deploy_local": "dfx deploy health_powered_AI_platform",
-    "canister_deploy_mainnet": "dfx deploy --network ic health_powered_AI_platform",
-    "canister_uninstall": "dfx canister uninstall-code health_powered_AI_platform",
-    "canister_call_get_message": "dfx canister call health_powered_AI_platform getMessage",
-    "canister_call_set_message": "dfx canister call health_powered_AI_platform setMessage '(\"Hello world!\")'"
+    "build": "webpack",
+    "prebuild": "dfx generate",
+    "start": "webpack serve --mode development --env development",
+    "deploy:local": "dfx deploy --network=local",
+    "deploy:ic": "dfx deploy --network=ic",
+    "generate": "dfx generate health_ai_backend",
+    "gen-deploy:local": "dfx generate health_ai_backend && dfx deploy --network=local"
   },
   "dependencies": {
     "@dfinity/agent": "^0.19.2",
@@ -41,7 +49,7 @@
   "devDependencies": {
     "@babel/core": "^7.21.8",
     "@babel/preset-env": "^7.21.5",
-    "@babel/preset-react": "^7.18.6",
+    "@babel/preset-react": "^7.23.3",
     "assert": "2.0.0",
     "babel-loader": "^8.0.0",
     "buffer": "6.0.3",
@@ -50,19 +58,23 @@
     "dotenv": "^16.3.1",
     "events": "3.3.0",
     "file-loader": "^6.2.0",
-    "html-webpack-plugin": "5.5.0",
+    "html-webpack-plugin": "^5.5.4",
     "process": "0.11.10",
     "stream-browserify": "3.0.0",
     "style-loader": "^3.3.2",
-    "terser-webpack-plugin": "^5.3.3",
+    "terser-webpack-plugin": "^5.3.9",
     "util": "0.12.4",
-    "webpack": "^5.73.0",
-    "webpack-cli": "^4.10.0",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^4.8.1"
   },
   "engines": {
     "node": "^12 || ^14 || ^16 || ^18"
   },
+  "babel": {
+    "presets": ["@babel/preset-env", "@babel/preset-react"]
+  },
+  
   "browserslist": [
     "last 2 chrome version",
     "last 2 firefox version",
