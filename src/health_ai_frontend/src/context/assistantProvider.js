@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { getMyAssistant } from "../components/utils/assistantCanister";
-import { createThread } from "../components/utils/chat";
+import { getMyAssistant } from "../utils/assistantCanister";
+import { createThread } from "../utils/chat";
 
 const AssistantContext = createContext();
 export const useAssistant = () => useContext(AssistantContext);

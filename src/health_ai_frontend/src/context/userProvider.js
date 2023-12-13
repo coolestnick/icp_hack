@@ -1,5 +1,5 @@
 import React, { useContext, createContext, useEffect, useState } from "react";
-import { getUsername } from "../components/utils/assistantCanister";
+import { getUsername } from "../utils/assistantCanister";
 
 const UserContext = createContext();
 export const useUser = () => useContext(UserContext);

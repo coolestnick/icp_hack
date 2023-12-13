@@ -1,6 +1,6 @@
 import toast from "react-hot-toast";
 import Openai from "openai";
-import { OPEN_AI_API_KEY } from "../../../../../credential";
+import { OPEN_AI_API_KEY } from "../../../../credential";
 import { hasASavedThread, saveThread, getThread } from "./assistantCanister";
 
 // NOTE: This is only for testing purposes. The API should not be exposed in a real production app

@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import { initializeContract } from "./components/utils/icp";
+import { initializeContract } from "./utils/icp";
 import AssistantProvider from "./context/assistantProvider";
 import UserProvider from "./context/userProvider";
 
