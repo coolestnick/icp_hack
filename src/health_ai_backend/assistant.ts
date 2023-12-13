@@ -16,7 +16,7 @@ class Assistant {
     }
 
     // Save or update a conversation thread
-    saveThread(userIdentity: string, userInput: string) {
+    saveThread() {
         return update(
             [text, text],
             Result(Thread, ErrorResponse),
@@ -57,7 +57,7 @@ class Assistant {
     }
 
     // Retrieve a conversation thread
-    getThread(userIdentity: string) {
+    getThread() {
         return query(
             [text],
             Result(Thread, ErrorResponse),
@@ -79,7 +79,7 @@ class Assistant {
     }
 
     // Delete a conversation thread
-    deleteThread(userIdentity: string) {
+    deleteThread() {
         return update([text], Result(text, ErrorResponse), async (userIdentity) => {
             if (!userIdentity) {
                 return Err({
@@ -100,7 +100,7 @@ class Assistant {
     }
 
     // Check if a thread exists for a user
-    hasASavedThread(userIdentity: string) {
+    hasASavedThread() {
         return query([text], bool, async (userIdentity) => {
             const thread = threadStorage.get(userIdentity);
             return !("None" in thread);

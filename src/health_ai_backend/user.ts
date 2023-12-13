@@ -1,11 +1,11 @@
-import { update, text, Ok, Err, Result, query, bool } from "azle";
+import { update, text, Ok, Err, Result, query, bool, StableBTreeMap } from "azle";
 import { ErrorResponse } from "./models/error";
 
-const usernameStorage = new Map<string, string>();
+const usernameStorage = StableBTreeMap(text, text, 3);
 
 class User {
     // Method to update a user's username
-    updateUsername(userIdentity: string, newUsername: string) {
+    updateUsername() {
         return update(
             [text, text],
             Result(text, ErrorResponse),
@@ -16,14 +16,14 @@ class User {
                     });
                 }
 
-                usernameStorage.set(userIdentity, newUsername);
+                usernameStorage.insert(userIdentity, newUsername);
                 return Ok(newUsername);
             }
         );
     }
 
     // Method to retrieve a user's username
-    getUsername(userIdentity: string) {
+    getUsername() {
         return query(
             [text],
             Result(text, ErrorResponse),
@@ -33,23 +33,22 @@ class User {
                 }
 
                 const username = usernameStorage.get(userIdentity);
-                if (!username) {
+                if ("None" in username) {
                     return Err({
                         error: { message: `No username found for ${userIdentity}` },
                     });
                 }
-
-                return Ok(username);
+                return Ok(username.Some);
             }
         );
     }
 
-    // Method to check if a username exists for a given user identity
-    hasUsername(userIdentity: string) {
+    // Additional method to check if a username exists for a given user identity
+    hasUsername() {
         return query(
             [text],
             bool,
-            async (userIdentity) => {
+            async (userIdentity: any) => {
                 return usernameStorage.has(userIdentity);
             }
         );

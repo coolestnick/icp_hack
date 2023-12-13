@@ -1,7 +1,7 @@
 import { Canister } from "azle";
 import assistant from "./assistant";
-import user from "./user";
-import { ASSISTANT_ID } from "../../../credential";
+import user from "./user"
+import { ASSISTANT_ID } from "../../credential";
 
 let assistantId: string = ASSISTANT_ID ?? "";
 
