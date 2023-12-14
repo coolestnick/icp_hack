@@ -21,6 +21,7 @@
     "@dfinity/agent": "^0.19.2",
     "@dfinity/auth-client": "^0.19.3",
     "@dfinity/candid": "^0.19.2",
+    "@dfinity/identity": "^0.20.2",
     "@dfinity/ledger": "^0.0.15",
     "@dfinity/nns": "^0.16.7",
     "@dfinity/principal": "^0.19.2",
@@ -48,7 +49,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.21.8",
-    "@babel/preset-env": "^7.21.5",
+    "@babel/preset-env": "^7.23.6",
     "@babel/preset-react": "^7.23.3",
     "assert": "2.0.0",
     "babel-loader": "^8.0.0",
@@ -72,9 +73,11 @@
     "node": "^12 || ^14 || ^16 || ^18"
   },
   "babel": {
-    "presets": ["@babel/preset-env", "@babel/preset-react"]
+    "presets": [
+      "@babel/preset-env",
+      "@babel/preset-react"
+    ]
   },
-  
   "browserslist": [
     "last 2 chrome version",
     "last 2 firefox version",

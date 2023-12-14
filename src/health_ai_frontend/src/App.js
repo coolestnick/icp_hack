@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-// import "./App.css";
+import "./App.css";
 import "./index.css";
 import Chat from "./components/Chat";
 import { Toaster } from "react-hot-toast";

@@ -1,5 +1,5 @@
 import { HttpAgent, Actor } from "@dfinity/agent";
-import { idlFactory as marketPlaceIDL } from "../../../declarations/dfinity_js_backend/dfinity_js_backend.did.js";
+import { idlFactory as marketPlaceIDL } from "../../../declarations/health_ai_backend/health_ai_backend.did.js";
 
 const CHAT_CANISTER_ID = "bkyz2-fmaaa-aaaaa-qaaaq-cai";
 
