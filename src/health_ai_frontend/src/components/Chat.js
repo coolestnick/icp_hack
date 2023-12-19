@@ -1,75 +1,91 @@
 import React, { useState, useEffect } from "react";
-import ReactDOM from "react-dom";
 import Loading from "./Loading";
-import { login, logout } from "../utils/auth";
+import { login, logout } from "../utils/auth"; // Ensure this path is correct
 import toast from "react-hot-toast";
-import { useAssistant } from "../context/HealthAiProvider";
+import { useHealthAi } from "../context/HealthAiProvider"; // Make sure this is the correct path
 import {
   analyseConversationSteps,
   createPatientQuery,
   getConversationHistory,
   initiateAssistantSession,
-} from "../utils/conversation";
-import { usePatient } from "../context/PatientProvider";
-import "./Chat.css";
-import { useLocation, useNavigate } from "react-router-dom";
+} from "../utils/conversation"; // Update paths if necessary
+import { usePatient } from "../context/PatientProvider"; // Update paths if necessary
+import "./Chat.css"; // Update paths if necessary
 
 export default function Chat() {
   const [query, setQuery] = useState("");
   const { patientDetails } = usePatient();
   const [conversation, setConversation] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [sessionModalOpened, setSessionModalOpened] = useState(false);
-  const { assistant, conversationThread } = useAssistant();
-  const location = useLocation();
-  const navigate = useNavigate();
-
+  const { healthAssistant, healthThread } = useHealthAi();
+  
+  // Updates the conversation history
   const updateConversation = async () => {
-    if (
-      window.auth.principalText &&
-      window.auth.isAuthenticated &&
-      conversationThread?.id
-    ) {
-      const messages = await getConversationHistory(conversationThread.id);
-      setConversation(messages);
+    if (window.auth?.isAuthenticated && healthThread?.id) {
+      try {
+        const messages = await getConversationHistory(healthThread.id);
+        setConversation(messages);
+      } catch (error) {
+        toast.error("Failed to load conversation history: " + error.message);
+      }
     }
   };
 
+  // Handles sending a new query
   const handleQuerySubmit = async (event) => {
     event.preventDefault();
-    if (!window.auth.isAuthenticated) {
+    if (!window.auth?.isAuthenticated) {
       toast.error("You are not authenticated");
       return;
     }
 
-    if (!assistant?.id) {
-      toast.error("You need to add an assistant first");
+    if (!healthAssistant?.id || !healthThread?.id) {
+      toast.error("Assistant or conversation thread is missing");
       return;
     }
 
-    if (!conversationThread?.id || !assistant?.id) {
-      console.log("Cannot create a query without a conversation thread or an assistant");
+    if (!query) {
+      toast.error("Please enter a query");
       return;
     }
 
-    if (!query) return;
-
-    const queryToSend = { content: query, role: "patient" };
-    setConversation((prev) => [queryToSend, ...prev]);
-    setLoading(true);
-    await createPatientQuery(conversationThread.id, queryToSend);
-    setQuery("");
-    const sessionRunId = await initiateAssistantSession(conversationThread.id, assistant.id);
-    const isSessionCompleted = await analyseConversationSteps(conversationThread.id, sessionRunId);
-    if (isSessionCompleted) {
-      await updateConversation();
+    try {
+      const queryToSend = { content: query, role: "patient" };
+      setLoading(true);
+      await createPatientQuery(healthThread.id, queryToSend);
+      const sessionRunId = await initiateAssistantSession(healthThread.id, healthAssistant.id);
+      const isSessionCompleted = await analyseConversationSteps(healthThread.id, sessionRunId);
+      if (isSessionCompleted) {
+        await updateConversation();
+      }
+      setQuery("");
+    } catch (error) {
+      toast.error("Failed to send query: " + error.message);
+    } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
     updateConversation();
-  }, [window.auth.principalText, window.auth.isAuthenticated, conversationThread?.id]);
+  }, [window.auth?.principalText, window.auth?.isAuthenticated, healthThread?.id]);
+
+  // Add login and logout button handlers
+  const handleLogin = async () => {
+    try {
+      await login();
+    } catch (error) {
+      toast.error("Login failed: " + error.message);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      toast.error("Logout failed: " + error.message);
+    }
+  };
 
   return (
     <div className="chat-wrapper">
@@ -77,18 +93,11 @@ export default function Chat() {
       <div className="chat-container">
         {/* Conversation display */}
         <div className="conversation">
-          {conversation
-            .map((message, index) => (
-              <div
-                key={index}
-                className={`message ${
-                  message.role === "patient" ? "patient" : "assistant"
-                }`}
-              >
-                {message.content}
-              </div>
-            ))
-            .reverse()}
+          {conversation.map((message, index) => (
+            <div key={index} className={`message ${message.role === "patient" ? "patient" : "assistant"}`}>
+              {message.content}
+            </div>
+          )).reverse()}
           {loading && <Loading />}
         </div>
         {/* Chat input field */}
@@ -101,10 +110,17 @@ export default function Chat() {
           />
           <button onClick={handleQuerySubmit}>Send</button>
         </div>
+        {/* Login/Logout button */}
+        {!window.auth?.isAuthenticated ? (
+          <button onClick={handleLogin} className="auth-button">
+            Login
+          </button>
+        ) : (
+          <button onClick={handleLogout} className="auth-button">
+            Logout
+          </button>
+        )}
       </div>
     </div>
   );
 }
-
-// Assuming your project setup includes a root element with the id 'root'
-//ReactDOM.render(<Chat />, document.getElementById("root"));

@@ -21222,78 +21222,99 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (/* binding */ Chat)
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
-/* harmony import */ var _Loading__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Loading */ "./src/health_ai_frontend/src/components/Loading.js");
-/* harmony import */ var _utils_auth__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utils/auth */ "./src/health_ai_frontend/src/utils/auth.js");
-/* harmony import */ var react_hot_toast__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react-hot-toast */ "./node_modules/react-hot-toast/dist/index.mjs");
-/* harmony import */ var _context_HealthAiProvider__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../context/HealthAiProvider */ "./src/health_ai_frontend/src/context/HealthAiProvider.js");
-/* harmony import */ var _utils_conversation__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../utils/conversation */ "./src/health_ai_frontend/src/utils/conversation.js");
-/* harmony import */ var _context_PatientProvider__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../context/PatientProvider */ "./src/health_ai_frontend/src/context/PatientProvider.js");
-/* harmony import */ var _Chat_css__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./Chat.css */ "./src/health_ai_frontend/src/components/Chat.css");
-/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router/dist/index.js");
+/* harmony import */ var _Loading__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Loading */ "./src/health_ai_frontend/src/components/Loading.js");
+/* harmony import */ var _utils_auth__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/auth */ "./src/health_ai_frontend/src/utils/auth.js");
+/* harmony import */ var react_hot_toast__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-hot-toast */ "./node_modules/react-hot-toast/dist/index.mjs");
+/* harmony import */ var _context_HealthAiProvider__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../context/HealthAiProvider */ "./src/health_ai_frontend/src/context/HealthAiProvider.js");
+/* harmony import */ var _utils_conversation__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../utils/conversation */ "./src/health_ai_frontend/src/utils/conversation.js");
+/* harmony import */ var _context_PatientProvider__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../context/PatientProvider */ "./src/health_ai_frontend/src/context/PatientProvider.js");
+/* harmony import */ var _Chat_css__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./Chat.css */ "./src/health_ai_frontend/src/components/Chat.css");
 
 
+ // Ensure this path is correct
 
-
-
-
-
-
-
+ // Make sure this is the correct path
+ // Update paths if necessary
+ // Update paths if necessary
+ // Update paths if necessary
 
 function Chat() {
   const [query, setQuery] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)("");
   const {
     patientDetails
-  } = (0,_context_PatientProvider__WEBPACK_IMPORTED_MODULE_7__.usePatient)();
+  } = (0,_context_PatientProvider__WEBPACK_IMPORTED_MODULE_6__.usePatient)();
   const [conversation, setConversation] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
   const [loading, setLoading] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
-  const [sessionModalOpened, setSessionModalOpened] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
   const {
-    assistant,
-    conversationThread
-  } = (0,_context_HealthAiProvider__WEBPACK_IMPORTED_MODULE_5__.useAssistant)();
-  const location = (0,react_router_dom__WEBPACK_IMPORTED_MODULE_9__.useLocation)();
-  const navigate = (0,react_router_dom__WEBPACK_IMPORTED_MODULE_9__.useNavigate)();
+    healthAssistant,
+    healthThread
+  } = (0,_context_HealthAiProvider__WEBPACK_IMPORTED_MODULE_4__.useHealthAi)();
+
+  // Updates the conversation history
   const updateConversation = async () => {
-    if (window.auth.principalText && window.auth.isAuthenticated && conversationThread?.id) {
-      const messages = await (0,_utils_conversation__WEBPACK_IMPORTED_MODULE_6__.getConversationHistory)(conversationThread.id);
-      setConversation(messages);
+    if (window.auth?.isAuthenticated && healthThread?.id) {
+      try {
+        const messages = await (0,_utils_conversation__WEBPACK_IMPORTED_MODULE_5__.getConversationHistory)(healthThread.id);
+        setConversation(messages);
+      } catch (error) {
+        react_hot_toast__WEBPACK_IMPORTED_MODULE_3__["default"].error("Failed to load conversation history: " + error.message);
+      }
     }
   };
+
+  // Handles sending a new query
   const handleQuerySubmit = async event => {
     event.preventDefault();
-    if (!window.auth.isAuthenticated) {
-      react_hot_toast__WEBPACK_IMPORTED_MODULE_4__["default"].error("You are not authenticated");
+    if (!window.auth?.isAuthenticated) {
+      react_hot_toast__WEBPACK_IMPORTED_MODULE_3__["default"].error("You are not authenticated");
       return;
     }
-    if (!assistant?.id) {
-      react_hot_toast__WEBPACK_IMPORTED_MODULE_4__["default"].error("You need to add an assistant first");
+    if (!healthAssistant?.id || !healthThread?.id) {
+      react_hot_toast__WEBPACK_IMPORTED_MODULE_3__["default"].error("Assistant or conversation thread is missing");
       return;
     }
-    if (!conversationThread?.id || !assistant?.id) {
-      console.log("Cannot create a query without a conversation thread or an assistant");
+    if (!query) {
+      react_hot_toast__WEBPACK_IMPORTED_MODULE_3__["default"].error("Please enter a query");
       return;
     }
-    if (!query) return;
-    const queryToSend = {
-      content: query,
-      role: "patient"
-    };
-    setConversation(prev => [queryToSend, ...prev]);
-    setLoading(true);
-    await (0,_utils_conversation__WEBPACK_IMPORTED_MODULE_6__.createPatientQuery)(conversationThread.id, queryToSend);
-    setQuery("");
-    const sessionRunId = await (0,_utils_conversation__WEBPACK_IMPORTED_MODULE_6__.initiateAssistantSession)(conversationThread.id, assistant.id);
-    const isSessionCompleted = await (0,_utils_conversation__WEBPACK_IMPORTED_MODULE_6__.analyseConversationSteps)(conversationThread.id, sessionRunId);
-    if (isSessionCompleted) {
-      await updateConversation();
+    try {
+      const queryToSend = {
+        content: query,
+        role: "patient"
+      };
+      setLoading(true);
+      await (0,_utils_conversation__WEBPACK_IMPORTED_MODULE_5__.createPatientQuery)(healthThread.id, queryToSend);
+      const sessionRunId = await (0,_utils_conversation__WEBPACK_IMPORTED_MODULE_5__.initiateAssistantSession)(healthThread.id, healthAssistant.id);
+      const isSessionCompleted = await (0,_utils_conversation__WEBPACK_IMPORTED_MODULE_5__.analyseConversationSteps)(healthThread.id, sessionRunId);
+      if (isSessionCompleted) {
+        await updateConversation();
+      }
+      setQuery("");
+    } catch (error) {
+      react_hot_toast__WEBPACK_IMPORTED_MODULE_3__["default"].error("Failed to send query: " + error.message);
+    } finally {
       setLoading(false);
     }
   };
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
     updateConversation();
-  }, [window.auth.principalText, window.auth.isAuthenticated, conversationThread?.id]);
+  }, [window.auth?.principalText, window.auth?.isAuthenticated, healthThread?.id]);
+
+  // Add login and logout button handlers
+  const handleLogin = async () => {
+    try {
+      await (0,_utils_auth__WEBPACK_IMPORTED_MODULE_2__.login)();
+    } catch (error) {
+      react_hot_toast__WEBPACK_IMPORTED_MODULE_3__["default"].error("Login failed: " + error.message);
+    }
+  };
+  const handleLogout = async () => {
+    try {
+      await (0,_utils_auth__WEBPACK_IMPORTED_MODULE_2__.logout)();
+    } catch (error) {
+      react_hot_toast__WEBPACK_IMPORTED_MODULE_3__["default"].error("Logout failed: " + error.message);
+    }
+  };
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
     className: "chat-wrapper"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
@@ -21303,7 +21324,7 @@ function Chat() {
   }, conversation.map((message, index) => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
     key: index,
     className: `message ${message.role === "patient" ? "patient" : "assistant"}`
-  }, message.content)).reverse(), loading && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_Loading__WEBPACK_IMPORTED_MODULE_2__["default"], null)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+  }, message.content)).reverse(), loading && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_Loading__WEBPACK_IMPORTED_MODULE_1__["default"], null)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
     className: "input-area"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("input", {
     type: "text",
@@ -21312,11 +21333,14 @@ function Chat() {
     onChange: e => setQuery(e.target.value)
   }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
     onClick: handleQuerySubmit
-  }, "Send"))));
+  }, "Send")), !window.auth?.isAuthenticated ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
+    onClick: handleLogin,
+    className: "auth-button"
+  }, "Login") : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
+    onClick: handleLogout,
+    className: "auth-button"
+  }, "Logout")));
 }
-
-// Assuming your project setup includes a root element with the id 'root'
-//ReactDOM.render(<Chat />, document.getElementById("root"));
 
 /***/ }),
 
