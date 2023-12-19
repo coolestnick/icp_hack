@@ -1,5 +1,5 @@
-import { useUser } from "../../context/userProvider";
-import { updateUsername } from "../../utils/assistantCanister";
+import { useUser } from "../../context/PatientProvider";
+import { updateUsername } from "../../utils/healthAiCanister";
 import React, { useState } from "react";
 
 const UpdateUsername = ({ onClose }) => {
