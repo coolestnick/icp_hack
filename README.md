@@ -46,3 +46,4 @@ Assuming you have [created a cycles wallet](https://internetcomputer.org/docs/cu
 npm run canister_deploy_mainnet
 ```
 # icp_hack
+# derk
