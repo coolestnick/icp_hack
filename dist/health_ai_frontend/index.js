@@ -21114,61 +21114,6 @@ const init = ({
 
 /***/ }),
 
-/***/ "./src/declarations/health_ai_backend/index.js":
-/*!*****************************************************!*\
-  !*** ./src/declarations/health_ai_backend/index.js ***!
-  \*****************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   canisterId: () => (/* binding */ canisterId),
-/* harmony export */   createActor: () => (/* binding */ createActor),
-/* harmony export */   health_ai_backend: () => (/* binding */ health_ai_backend),
-/* harmony export */   idlFactory: () => (/* reexport safe */ _health_ai_backend_did_js__WEBPACK_IMPORTED_MODULE_1__.idlFactory)
-/* harmony export */ });
-/* harmony import */ var _dfinity_agent__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @dfinity/agent */ "./node_modules/@dfinity/agent/lib/esm/index.js");
-/* harmony import */ var _health_ai_backend_did_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./health_ai_backend.did.js */ "./src/declarations/health_ai_backend/health_ai_backend.did.js");
-
-
-// Imports and re-exports candid interface
-
-
-
-/* CANISTER_ID is replaced by webpack based on node environment
- * Note: canister environment variable will be standardized as
- * process.env.CANISTER_ID_<CANISTER_NAME_UPPERCASE>
- * beginning in dfx 0.15.0
- */
-const canisterId = "bkyz2-fmaaa-aaaaa-qaaaq-cai" || 0;
-const createActor = (canisterId, options = {}) => {
-  const agent = options.agent || new _dfinity_agent__WEBPACK_IMPORTED_MODULE_0__.HttpAgent({
-    ...options.agentOptions
-  });
-  if (options.agent && options.agentOptions) {
-    console.warn("Detected both agent and agentOptions passed to createActor. Ignoring agentOptions and proceeding with the provided agent.");
-  }
-
-  // Fetch root key for certificate validation during development
-  if (true) {
-    agent.fetchRootKey().catch(err => {
-      console.warn("Unable to fetch root key. Check to ensure that your local replica is running");
-      console.error(err);
-    });
-  }
-
-  // Creates an actor with using the candid interface and the HttpAgent
-  return _dfinity_agent__WEBPACK_IMPORTED_MODULE_0__.Actor.createActor(_health_ai_backend_did_js__WEBPACK_IMPORTED_MODULE_1__.idlFactory, {
-    agent,
-    canisterId,
-    ...options.actorOptions
-  });
-};
-const health_ai_backend = createActor(canisterId);
-
-/***/ }),
-
 /***/ "./src/health_ai_frontend/src/App.js":
 /*!*******************************************!*\
   !*** ./src/health_ai_frontend/src/App.js ***!
@@ -21225,44 +21170,43 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Loading__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Loading */ "./src/health_ai_frontend/src/components/Loading.js");
 /* harmony import */ var _utils_auth__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/auth */ "./src/health_ai_frontend/src/utils/auth.js");
 /* harmony import */ var react_hot_toast__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-hot-toast */ "./node_modules/react-hot-toast/dist/index.mjs");
-/* harmony import */ var _context_HealthAiProvider__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../context/HealthAiProvider */ "./src/health_ai_frontend/src/context/HealthAiProvider.js");
-/* harmony import */ var _utils_conversation__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../utils/conversation */ "./src/health_ai_frontend/src/utils/conversation.js");
-/* harmony import */ var _context_PatientProvider__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../context/PatientProvider */ "./src/health_ai_frontend/src/context/PatientProvider.js");
+/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router/dist/index.js");
+/* harmony import */ var _utils_chat__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../utils/chat */ "./src/health_ai_frontend/src/utils/chat.js");
+/* harmony import */ var _context_PatientProvider__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../context/PatientProvider */ "./src/health_ai_frontend/src/context/PatientProvider.js");
+/* harmony import */ var _context_HealthAiProvider__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../context/HealthAiProvider */ "./src/health_ai_frontend/src/context/HealthAiProvider.js");
 /* harmony import */ var _Chat_css__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./Chat.css */ "./src/health_ai_frontend/src/components/Chat.css");
 
 
- // Ensure this path is correct
 
- // Make sure this is the correct path
- // Update paths if necessary
- // Update paths if necessary
- // Update paths if necessary
+
+
+
+
+
 
 function Chat() {
   const [query, setQuery] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)("");
   const {
-    patientDetails
-  } = (0,_context_PatientProvider__WEBPACK_IMPORTED_MODULE_6__.usePatient)();
+    patientName,
+    setPatientName
+  } = (0,_context_PatientProvider__WEBPACK_IMPORTED_MODULE_5__.usePatient)();
   const [conversation, setConversation] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
   const [loading, setLoading] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
   const {
     healthAssistant,
     healthThread
-  } = (0,_context_HealthAiProvider__WEBPACK_IMPORTED_MODULE_4__.useHealthAi)();
-
-  // Updates the conversation history
+  } = (0,_context_HealthAiProvider__WEBPACK_IMPORTED_MODULE_6__.useHealthAi)();
+  const navigate = (0,react_router_dom__WEBPACK_IMPORTED_MODULE_8__.useNavigate)();
   const updateConversation = async () => {
     if (window.auth?.isAuthenticated && healthThread?.id) {
       try {
-        const messages = await (0,_utils_conversation__WEBPACK_IMPORTED_MODULE_5__.getConversationHistory)(healthThread.id);
+        const messages = await (0,_utils_chat__WEBPACK_IMPORTED_MODULE_4__.getConversationHistory)(healthThread.id);
         setConversation(messages);
       } catch (error) {
         react_hot_toast__WEBPACK_IMPORTED_MODULE_3__["default"].error("Failed to load conversation history: " + error.message);
       }
     }
   };
-
-  // Handles sending a new query
   const handleQuerySubmit = async event => {
     event.preventDefault();
     if (!window.auth?.isAuthenticated) {
@@ -21283,9 +21227,9 @@ function Chat() {
         role: "patient"
       };
       setLoading(true);
-      await (0,_utils_conversation__WEBPACK_IMPORTED_MODULE_5__.createPatientQuery)(healthThread.id, queryToSend);
-      const sessionRunId = await (0,_utils_conversation__WEBPACK_IMPORTED_MODULE_5__.initiateAssistantSession)(healthThread.id, healthAssistant.id);
-      const isSessionCompleted = await (0,_utils_conversation__WEBPACK_IMPORTED_MODULE_5__.analyseConversationSteps)(healthThread.id, sessionRunId);
+      await (0,_utils_chat__WEBPACK_IMPORTED_MODULE_4__.createPatientQuery)(healthThread.id, queryToSend);
+      const sessionRunId = await (0,_utils_chat__WEBPACK_IMPORTED_MODULE_4__.initiateAssistantSession)(healthThread.id, healthAssistant.id);
+      const isSessionCompleted = await (0,_utils_chat__WEBPACK_IMPORTED_MODULE_4__.analyseConversationSteps)(healthThread.id, sessionRunId);
       if (isSessionCompleted) {
         await updateConversation();
       }
@@ -21299,22 +21243,6 @@ function Chat() {
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
     updateConversation();
   }, [window.auth?.principalText, window.auth?.isAuthenticated, healthThread?.id]);
-
-  // Add login and logout button handlers
-  const handleLogin = async () => {
-    try {
-      await (0,_utils_auth__WEBPACK_IMPORTED_MODULE_2__.login)();
-    } catch (error) {
-      react_hot_toast__WEBPACK_IMPORTED_MODULE_3__["default"].error("Login failed: " + error.message);
-    }
-  };
-  const handleLogout = async () => {
-    try {
-      await (0,_utils_auth__WEBPACK_IMPORTED_MODULE_2__.logout)();
-    } catch (error) {
-      react_hot_toast__WEBPACK_IMPORTED_MODULE_3__["default"].error("Logout failed: " + error.message);
-    }
-  };
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
     className: "chat-wrapper"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
@@ -21334,10 +21262,10 @@ function Chat() {
   }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
     onClick: handleQuerySubmit
   }, "Send")), !window.auth?.isAuthenticated ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
-    onClick: handleLogin,
+    onClick: () => (0,_utils_auth__WEBPACK_IMPORTED_MODULE_2__.login)(),
     className: "auth-button"
   }, "Login") : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
-    onClick: handleLogout,
+    onClick: () => (0,_utils_auth__WEBPACK_IMPORTED_MODULE_2__.logout)(),
     className: "auth-button"
   }, "Logout")));
 }
@@ -21727,7 +21655,7 @@ __webpack_require__.r(__webpack_exports__);
 const MAX_TTL = BigInt(7 * 24 * 60 * 60 * 1000 * 1000 * 1000);
 
 // Use the INTERNET_IDENTITY_CANISTER_ID from your .env file
-const IDENTITY_PROVIDER = `http://br5f7-7uaaa-aaaaa-qaaca-cai.localhost:8943/`;
+const IDENTITY_PROVIDER = `http://br5f7-7uaaa-aaaaa-qaaca-cai.localhost:4943/`;
 async function getAuthClient() {
   return await _dfinity_auth_client__WEBPACK_IMPORTED_MODULE_0__.AuthClient.create();
 }
@@ -21884,74 +21812,6 @@ const analyseRunsStepsDone = async (threadId, runId) => {
 const retreiveAssistantFromOpenai = async assistantid => {
   const assistant = await openai.beta.assistants.retrieve(assistantid);
   return assistant;
-};
-
-/***/ }),
-
-/***/ "./src/health_ai_frontend/src/utils/conversation.js":
-/*!**********************************************************!*\
-  !*** ./src/health_ai_frontend/src/utils/conversation.js ***!
-  \**********************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   deleteConversationThread: () => (/* binding */ deleteConversationThread),
-/* harmony export */   getConversationThread: () => (/* binding */ getConversationThread),
-/* harmony export */   hasSavedThread: () => (/* binding */ hasSavedThread),
-/* harmony export */   saveConversationThread: () => (/* binding */ saveConversationThread)
-/* harmony export */ });
-/* harmony import */ var _dfinity_agent__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @dfinity/agent */ "./node_modules/@dfinity/agent/lib/esm/index.js");
-/* harmony import */ var _declarations_health_ai_backend__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../declarations/health_ai_backend */ "./src/declarations/health_ai_backend/index.js");
-// Import necessary dependencies and modules
-
-
-const HEALTH_AI_BACKEND_CANISTER_ID = 'bkyz2-fmaaa-aaaaa-qaaaq-cai';
-
-// Initialize the actor to interact with the backend canister
-const backendActor = _dfinity_agent__WEBPACK_IMPORTED_MODULE_0__.Actor.createActor(_declarations_health_ai_backend__WEBPACK_IMPORTED_MODULE_1__.idlFactory, {
-  canisterId: HEALTH_AI_BACKEND_CANISTER_ID
-});
-
-// Function to get the conversation thread
-const getConversationThread = async userIdentity => {
-  try {
-    return await backendActor.getThread(userIdentity);
-  } catch (error) {
-    console.error("Error in getConversationThread:", error);
-    throw error;
-  }
-};
-
-// Function to save a conversation thread
-const saveConversationThread = async (userIdentity, userInput) => {
-  try {
-    return await backendActor.saveThread(userIdentity, userInput);
-  } catch (error) {
-    console.error("Error in saveConversationThread:", error);
-    throw error;
-  }
-};
-
-// Function to delete a conversation thread
-const deleteConversationThread = async userIdentity => {
-  try {
-    return await backendActor.deleteThread(userIdentity);
-  } catch (error) {
-    console.error("Error in deleteConversationThread:", error);
-    throw error;
-  }
-};
-
-// Function to check if a thread exists for a user
-const hasSavedThread = async userIdentity => {
-  try {
-    return await backendActor.hasASavedThread(userIdentity);
-  } catch (error) {
-    console.error("Error in hasSavedThread:", error);
-    throw error;
-  }
 };
 
 /***/ }),

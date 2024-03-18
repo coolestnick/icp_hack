@@ -1,25 +1,26 @@
 import React, { useState, useEffect } from "react";
 import Loading from "./Loading";
-import { login, logout } from "../utils/auth"; // Ensure this path is correct
+import { login, logout } from "../utils/auth";
 import toast from "react-hot-toast";
-import { useHealthAi } from "../context/HealthAiProvider"; // Make sure this is the correct path
+import { useNavigate } from "react-router-dom";
 import {
   analyseConversationSteps,
   createPatientQuery,
   getConversationHistory,
   initiateAssistantSession,
-} from "../utils/conversation"; // Update paths if necessary
-import { usePatient } from "../context/PatientProvider"; // Update paths if necessary
-import "./Chat.css"; // Update paths if necessary
+} from "../utils/chat";
+import { usePatient } from "../context/PatientProvider";
+import { useHealthAi } from "../context/HealthAiProvider";
+import "./Chat.css";
 
 export default function Chat() {
   const [query, setQuery] = useState("");
-  const { patientDetails } = usePatient();
+  const { patientName, setPatientName } = usePatient();
   const [conversation, setConversation] = useState([]);
   const [loading, setLoading] = useState(false);
   const { healthAssistant, healthThread } = useHealthAi();
-  
-  // Updates the conversation history
+  const navigate = useNavigate();
+
   const updateConversation = async () => {
     if (window.auth?.isAuthenticated && healthThread?.id) {
       try {
@@ -31,7 +32,6 @@ export default function Chat() {
     }
   };
 
-  // Handles sending a new query
   const handleQuerySubmit = async (event) => {
     event.preventDefault();
     if (!window.auth?.isAuthenticated) {
@@ -70,28 +70,9 @@ export default function Chat() {
     updateConversation();
   }, [window.auth?.principalText, window.auth?.isAuthenticated, healthThread?.id]);
 
-  // Add login and logout button handlers
-  const handleLogin = async () => {
-    try {
-      await login();
-    } catch (error) {
-      toast.error("Login failed: " + error.message);
-    }
-  };
-
-  const handleLogout = async () => {
-    try {
-      await logout();
-    } catch (error) {
-      toast.error("Logout failed: " + error.message);
-    }
-  };
-
   return (
     <div className="chat-wrapper">
-      {/* Session modal and other UI components */}
       <div className="chat-container">
-        {/* Conversation display */}
         <div className="conversation">
           {conversation.map((message, index) => (
             <div key={index} className={`message ${message.role === "patient" ? "patient" : "assistant"}`}>
@@ -100,7 +81,6 @@ export default function Chat() {
           )).reverse()}
           {loading && <Loading />}
         </div>
-        {/* Chat input field */}
         <div className="input-area">
           <input
             type="text"
@@ -110,15 +90,10 @@ export default function Chat() {
           />
           <button onClick={handleQuerySubmit}>Send</button>
         </div>
-        {/* Login/Logout button */}
         {!window.auth?.isAuthenticated ? (
-          <button onClick={handleLogin} className="auth-button">
-            Login
-          </button>
+          <button onClick={() => login()} className="auth-button">Login</button>
         ) : (
-          <button onClick={handleLogout} className="auth-button">
-            Logout
-          </button>
+          <button onClick={() => logout()} className="auth-button">Logout</button>
         )}
       </div>
     </div>

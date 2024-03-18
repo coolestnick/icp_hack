@@ -3,7 +3,7 @@ import { AuthClient } from "@dfinity/auth-client";
 const MAX_TTL = BigInt(7 * 24 * 60 * 60 * 1000 * 1000 * 1000);
 
 // Use the INTERNET_IDENTITY_CANISTER_ID from your .env file
-const IDENTITY_PROVIDER = `http://br5f7-7uaaa-aaaaa-qaaca-cai.localhost:8943/`;
+const IDENTITY_PROVIDER = `http://br5f7-7uaaa-aaaaa-qaaca-cai.localhost:4943/`;
 
 export async function getAuthClient() {
   return await AuthClient.create();
